@@ -15,6 +15,8 @@ import { initDb, postDb, deleteDb, editDb } from "./database";
 import { fetchCards } from "./cards";
 import { toggleForm, clearForm } from "./form";
 
+const installBtn = document.getElementById('installBtn');
+
 window.addEventListener("load", function () {
   initDb();
   fetchCards();
@@ -95,8 +97,24 @@ window.editCard = (e) => {
   submitBtnToUpdate = true;
 };
 
-if ('serviceWorker' in navigator) {
-  // Use the window load event to keep the page load performant
-  window.addEventListener('load', () => {
-  navigator.serviceWorker.register('./service-worker.js');
-})};
+
+window.addEventListener('beforeinstallprompt', (event) => {
+  event.preventDefault();
+  installBtn.style.visibility = 'visible';
+  
+  installBtn.addEventListener('click', () => {
+    event.prompt();
+    installBtn.setAttribute('disabled', true);
+    installBtn.textContent = 'Installed!';
+    });
+  });
+
+  window.addEventListener('appinstalled', (event) => {
+    console.log('👍', 'appinstalled', event);
+  });
+
+  if ('serviceWorker' in navigator) {
+    // Use the window load event to keep the page load performant
+    window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js');
+  })};
